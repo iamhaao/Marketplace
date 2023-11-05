@@ -3,6 +3,8 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import userRouter from "./routes/user.js";
 import authRouter from "./routes/auth.js";
+import bodyParser from "body-parser";
+import cors from "cors";
 dotenv.config();
 
 mongoose
@@ -15,8 +17,11 @@ mongoose
   });
 const app = express();
 app.use(express.json());
-app.listen(3000, () => {
-  console.log("Server is running port 3000");
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cors());
+app.listen(3001, () => {
+  console.log("Server is running port 8080");
 });
 
 app.use("/api/user", userRouter);

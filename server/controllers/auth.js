@@ -23,18 +23,20 @@ export const signin = async (req, res, next) => {
   try {
     const validUser = await User.findOne({ email });
     if (!validUser) {
-      next(errorHandler(404, "User not found!!!!"));
+      return next(errorHandler(404, "User not found!!!!"));
     }
+
     const validPassword = bcryptjs.compareSync(password, validUser.password);
     if (!validPassword) {
-      next(errorHandler(401, "Invalid Password!!!"));
+      return next(errorHandler(401, "Invalid Password!!!"));
     }
+
     const token = jwt.sign({ id: validUser._id }, "iamhaao");
     res
       .cookie("access_token", token, { httpOnly: true })
       .status(200)
-      .json(validUser);
+      .json({ validUser });
   } catch (error) {
-    next(error);
+    next(error); // If there's an error in the try block
   }
 };
