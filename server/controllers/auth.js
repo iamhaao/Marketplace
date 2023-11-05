@@ -40,3 +40,26 @@ export const signin = async (req, res, next) => {
     next(error); // If there's an error in the try block
   }
 };
+export const google = async (req, res, next) => {
+  const { email, username, avatar } = req.body;
+  try {
+    const user = await User.findOne({ email: email });
+    if (user) {
+      const token = jwt.sign({ id: user._id }, "iamhaao");
+      res
+        .cookie("access_token", token, { httpOnly: true })
+        .status(200)
+        .json({ user });
+    } else {
+      const newUser = new User({ username, email, avatar });
+      await newUser.save();
+      const token = jwt.sign({ id: newUser._id }, "iamhaao");
+      res
+        .cookie("access_token", token, { httpOnly: true })
+        .status(200)
+        .json({ newUser });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
